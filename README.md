@@ -21,6 +21,7 @@ git clone https://github.com/trojan-gfw/trojan-manager.git
 cd trojan-manager  # Enter directory
 ```
 
+Basic usages
 
 ```bash
 python3 trojan_manager.py add user pass  # add user to database

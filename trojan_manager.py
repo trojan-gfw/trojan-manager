@@ -17,14 +17,10 @@ import sys
 VERSION = '1.2'
 
 
-class UserNotFoundException(object):
-    pass
-
-
 class TrojanDatabase:
 
     def __init__(self, db_user, db_pass, db):
-        self.dbpass = db_user
+        self.db_user = db_user
         self.db_pass = db_pass
         self.db = db
         self.table = 'trojan'
@@ -33,15 +29,15 @@ class TrojanDatabase:
 
     def add_user(self, username, password):
         hashed_password = hashlib.sha512(password.encode('utf-8')).hexdigest()
-        fullhash = hashlib.sha224('{}:{}'.format(username, password).encode('utf-8')).hexdigest()
-        self.cursor.execute("INSERT INTO {} (username, password, fullhash) VALUES ({}, {}, {})".format(self.table, username, hashed_password, fullhash))
+        fullhash = hashlib.sha224('{}:{}'.format(username, hashed_password).encode('utf-8')).hexdigest()
+        self.cursor.execute("INSERT INTO {} (username, password, fullhash) VALUES ('{}', '{}', '{}')".format(self.table, username, hashed_password, fullhash))
         self.connection.commit()
+        return 0
 
     def del_user(self, username):
         self.cursor.execute("DELETE FROM {} WHERE username = '{}'".format(self.table, username))
         if self.cursor.rowcount == 0:
-            raise UserNotFoundException()
-            return
+            return 1
         self.connection.commit()
 
     def user_exists(self, username):
@@ -58,21 +54,21 @@ class TrojanDatabase:
         for user in all_users:
             valid_hashes.append(user[2])
         if fullhash in valid_hashes:
-            print('Accept')
-            return True
-        print('Decline')
-        return False
+            print(0)
+            return 0
+        print(1)
+        return 1
 
 
 def main():
-    trojan_db = TrojanDatabase('trojan', 'trojan_password')
+    trojan_db = TrojanDatabase('trojan', 'thisisthetrojandbpassword', 'trojan')
     try:
         if sys.argv[1] == 'verify':
-            trojan_db.verify(sys.argv[2])
+            exit(trojan_db.verify(sys.argv[2]))
         elif sys.argv[1] == 'add':
-            trojan_db.add_user(sys.argv[2], sys.argv[3])
+            exit(trojan_db.add_user(sys.argv[2], sys.argv[3]))
         elif sys.argv[1] == 'delete':
-            trojan_db.del_user(sys.argv[2])
+            exit(trojan_db.del_user(sys.argv[2]))
         else:
             print('Invalid command')
     except IndexError:

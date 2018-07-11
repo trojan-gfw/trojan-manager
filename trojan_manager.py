@@ -4,17 +4,19 @@
 Name: Radius MySQL Account Controller
 Dev: K4YT3X
 Date Created: July 8, 2018
-Last Modified: July 8, 2018
+Last Modified: July 11, 2018
 
 Licensed under the GNU General Public License Version 3 (GNU GPL v3),
     available at: https://www.gnu.org/licenses/gpl-3.0.txt
 (C) 2018 K4YT3X
 """
+from prettytable import PrettyTable
+import avalon_framework as avalon
 import hashlib
 import MySQLdb
 import sys
 
-VERSION = '1.2.1'
+VERSION = '1.2.2'
 
 
 class TrojanDatabase:
@@ -63,6 +65,20 @@ class TrojanDatabase:
             return True
         return False
 
+    def show_users(self, show_quota=False):
+        total_users = self.cursor.execute("SELECT * FROM radcheck")
+        columns = ['ID', 'Username', 'Password']
+        if show_quota:
+            columns += ['Quota', 'Download', 'Upload']
+        table = PrettyTable(columns)
+        for user in self.cursor.fetchall():
+            if show_quota:
+                table.add_row(user)
+            else:
+                table.add_row([user[0], user[1], user[2]])
+        print(table)
+        avalon.info('Query complete, {} users found in database'.format(total_users))
+
     def set_quota(self, username, quota):
         try:
             self.cursor.execute("UPDATE users SET quota = {} WHERE username = '{}'".format(int(quota), username))
@@ -98,6 +114,7 @@ def print_help():
         "Verify [hash]",
         "Add [username] [password]",
         "Delete [username]",
+        "Show (users / quota)",
         "SetQuota [quota]",
         "AddQuota [quota]",
     ]
@@ -116,6 +133,11 @@ def main():
             trojan_db.add_user(sys.argv[2], sys.argv[3])
         elif sys.argv[1].lower() == 'delete':
             trojan_db.del_user(sys.argv[2])
+        elif sys.argv[1].lower() == 'show':
+            if sys.argv[2].lower() == 'users':
+                trojan_db.show_users()
+            elif sys.argv[2].lower() == 'quota':
+                trojan_db.show_users(show_quota=True)
         elif sys.argv[1].lower() == 'setquota':
             trojan_db.set_quota(sys.argv[2], sys.argv[3])
         elif sys.argv[1].lower() == 'addquota':

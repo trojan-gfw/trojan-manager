@@ -66,12 +66,14 @@ class TrojanDatabase:
     def set_quota(self, username, quota):
         try:
             self.cursor.execute("UPDATE users SET quota = {} WHERE username = '{}'".format(int(quota), username))
+            self.connection.commit()
         except ValueError:
             print('Quota must be an integer')
 
     def add_quota(self, username, appended_quota):
         try:
             self.cursor.execute("UPDATE users SET quota = quota + {} WHERE username = '{}'".format(appended_quota, username))
+            self.connection.commit()
         except ValueError:
             print('Quota must be an integer')
 

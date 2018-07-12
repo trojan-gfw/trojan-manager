@@ -1,40 +1,59 @@
 # Trojan Manager
 
-## Current Update (July 9, 2018)
-- Basic user authentication functionality
-- Basic user management
-    - Adding users
-    - Deleting users
+## Current Update (Version 1.3.0, July 12, 2018)
+- Adapted to trojan v1.5.0-alpha1
+- Better user interface
+- Interactive shell added
+- Better exception handling
+- Database operations from trojan manager
+    - Create user database
+    - Truncate user database
+    - Drop user database
+- SetQuota and AddQuota now supports conventional units (K,M,G,T)
+- Added ClearUsage function
+- Other minor improvements
 
-## Software description
+## Software Description
 
 This is a module for trojan server, which enables users the ability to store and verify users from a database (MySQL only at the moment). It will, in the future, also support user data usage statistics and more.
 
 ## Usages
 
-This software is currently still a stand-alone python software. It will be wrapped by the trojan software in the future by embedding the python into CPP code. You can view the current project as a PoC that can run like a RADIUS authenticator.
+The arguments will be passed onto the command interpreter. The first command line argument will be the first command. Vice versa.
 
-Installation
+### Installation
 
 ```bash
 git clone https://github.com/trojan-gfw/trojan-manager.git
 cd trojan-manager  # Enter directory
 ```
 
-Basic usages
+### Pass arguments directly from command line
 
 ```bash
-python3 trojan_manager.py add user pass  # add user to database
-python3 trojan_manager.py delte user     # delete user from database
-python3 verify hash                      # verify if credentials are valid
+python3 trojan_manager.py adduser user pass  # add user to database
+python3 trojan_manager.py deluser user       # delete user from database
+python3 verify hash                          # verify if credentials are valid
 ```
 
+### Using interactive shell
 
-## Examples
+```
+python3 trojan_manager interactive  # Enter interactive shell
+[trojan]> adduser user pass
+[trojan]> deluser user
+[trojan]> verify hash
+```
+
+### Interactive Shell
+
+The trojan manager interactive shell is an interface that can simplify trojan manager operations. Available commands can be listed with `Help` command. The interactive shell interpreter is **NOT case sensitive**, similar to SoftEther vpncmd.
+
+## More Examples
 
 ### Setup MySQL Server
 
-Create a database, a user and then grant privileges
+The database must be created manually, where the tables can be created automatically by trojan manager. To create a database, a user and then grant privileges, use the following commands in MySQL with root privilege.
 
 ```
 CREATE DATABASE trojan;
@@ -42,38 +61,42 @@ CREATE USER trojan;
 GRANT ALL ON trojan.* TO trojan@’localhost’ IDENTIFIED BY ‘thisisthetrojandbpassword’;
 ```
 
-</br>
-
-Create a table to store user credentials
+Trojan Manager can create a table to store user information automatically. Simply use `CreateUserTable` to create the table automatically.
 
 ```
-CREATE TABLE trojan (username VARCHAR(64), password VARCHAR(256), fullhash VARCHAR(256));
+python3 trojan_manager.py createusertable
+[trojan]> createusertable
 ```
 
-</br>
+Alternatively, you can also create the table manually.
+
+```
+use trojan;
+
+CREATE TABLE users (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    username VARCHAR(64) NOT NULL,
+    password CHAR(56) NOT NULL,
+    quota BIGINT NOT NULL DEFAULT 0,
+    download BIGINT UNSIGNED NOT NULL DEFAULT 0,
+    upload BIGINT UNSIGNED NOT NULL DEFAULT 0,
+    PRIMARY KEY (id),
+    INDEX (password)
+);
+```
+
+### User Management
 
 Then you will need to adjust the settings in the python file if changes are needed. If you execute all commands above as is, then you won't have to touch a thing in the python file. In case of Exceptions, read the error message.
 
-</br>
+Now you have finished setting up the database, you may perform user management operations. You can now add or delete users, set user quota and so on. For full help page please use `Help` command in trojan manager.
 
-Add a user named "testuser" into the database with password "password"
-
-```
-python3 trojan_manager.py add testuser password
-```
-
-</br>
-
-Delete a user named "testuser" from the database
-
-```
-python3 trojan_manager.py delete testuser password
-```
-
-</br>
+### Trojan Authentication
 
 Verify the user "testuser" with password "password". Passwords stored in the database are hashed by SHA512. The server is supposed to pass a hash in the format of SHA224(username + ":" + SHA512(password)). Verification is successful if the return value (output) is 0, 1 otherwise.
 
 ```
 python3 trojan_manager.py verify 2ce06815404ac8189d03df019361ffc6bd814384dea53bc1a66d135f
 ```
+
+For more information on trojan's authentication mechanism, please refer to [Trojan Authenticator](https://github.com/trojan-gfw/trojan/blob/dev/docs/authenticator.md) Page.

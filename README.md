@@ -38,7 +38,7 @@ python3 verify hash                          # verify if credentials are valid
 
 ### Using interactive shell
 
-```
+```bash
 python3 trojan_manager interactive  # Enter interactive shell
 [trojan]> adduser user pass
 [trojan]> deluser user
@@ -55,7 +55,7 @@ The trojan manager interactive shell is an interface that can simplify trojan ma
 
 The database must be created manually, where the tables can be created automatically by trojan manager. To create a database, a user and then grant privileges, use the following commands in MySQL with root privilege.
 
-```
+```sql
 CREATE DATABASE trojan;
 CREATE USER trojan;
 GRANT ALL ON trojan.* TO trojan@’localhost’ IDENTIFIED BY ‘thisisthetrojandbpassword’;
@@ -63,14 +63,14 @@ GRANT ALL ON trojan.* TO trojan@’localhost’ IDENTIFIED BY ‘thisisthetrojan
 
 Trojan Manager can create a table to store user information automatically. Simply use `CreateUserTable` to create the table automatically.
 
-```
+```bash
 python3 trojan_manager.py createusertable
 [trojan]> createusertable
 ```
 
 Alternatively, you can also create the table manually.
 
-```
+```sql
 use trojan;
 
 CREATE TABLE users (
@@ -95,7 +95,7 @@ Now you have finished setting up the database, you may perform user management o
 
 Verify the user "testuser" with password "password". Passwords stored in the database are hashed by SHA512. The server is supposed to pass a hash in the format of SHA224(username + ":" + SHA512(password)). Verification is successful if the return value (output) is 0, 1 otherwise.
 
-```
+```bash
 python3 trojan_manager.py verify 2ce06815404ac8189d03df019361ffc6bd814384dea53bc1a66d135f
 ```
 

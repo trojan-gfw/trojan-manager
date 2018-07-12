@@ -17,6 +17,8 @@
 
 This is a module for trojan server, which enables users the ability to store and verify users from a database (MySQL only at the moment). It will, in the future, also support user data usage statistics and more.
 
+![trojan-manager](https://user-images.githubusercontent.com/21986859/42651139-7d7692fa-85dc-11e8-83aa-12f6a4fad173.png)
+
 ## Usages
 
 The arguments will be passed onto the command interpreter. The first command line argument will be the first command. Vice versa.

@@ -14,9 +14,9 @@ from prettytable import PrettyTable
 import avalon_framework as avalon
 import hashlib
 import MySQLdb
+import readline
 import sys
 import traceback
-import readline
 
 VERSION = '1.3.1'
 
@@ -24,7 +24,6 @@ VERSION = '1.3.1'
 def show_affection(function):
     """ Shows cursor execution affected rows
     """
-
     def wrapper(*args, **kwargs):
         function(*args, **kwargs)
         avalon.dbgInfo('{} row(s) affected'.format(args[0].cursor.rowcount))

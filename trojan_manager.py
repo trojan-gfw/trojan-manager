@@ -16,8 +16,9 @@ import hashlib
 import MySQLdb
 import sys
 import traceback
+import readline
 
-VERSION = '1.3.0'
+VERSION = '1.3.1'
 
 
 def show_affection(function):
@@ -150,20 +151,21 @@ class TrojanDatabase:
         """ Convert data unit into bytes
         """
         try:
-            if data.isdigit():
-                return data
-            elif data[-1].lower() == 'k':
-                return int(data[:-1]) * 1024
-            elif data[-1].lower() == 'm':
-                return int(data[:-1]) * 1024 ** 2
-            elif data[-1].lower() == 'g':
-                return int(data[:-1]) * 1024 ** 3
-            elif data[-1].lower() == 't':
-                return int(data[:-1]) * 1024 ** 4
-            elif data[-1].lower() == 'p':
-                return int(data[:-1]) * 1024 ** 5
-            else:
-                return False
+            try:
+                return int(data)
+            except ValueError:
+                if data[-1].lower() == 'k':
+                    return int(data[:-1]) * 1024
+                elif data[-1].lower() == 'm':
+                    return int(data[:-1]) * 1024 ** 2
+                elif data[-1].lower() == 'g':
+                    return int(data[:-1]) * 1024 ** 3
+                elif data[-1].lower() == 't':
+                    return int(data[:-1]) * 1024 ** 4
+                elif data[-1].lower() == 'p':
+                    return int(data[:-1]) * 1024 ** 5
+                else:
+                    return False
         except ValueError:
             return False
 
@@ -229,6 +231,7 @@ def print_help():
         "SetQuota [quota]",
         "AddQuota [quota]",
         "ClearUsage [username]",
+        "Exit / Quit",
         "",
     ]
     for line in help_lines:
@@ -275,6 +278,9 @@ def command_interpreter(db_connection, commands):
             result = db_connection.add_quota(commands[2], commands[3])
         elif commands[1].lower() == 'clearusage':
             result = db_connection.clear_usage(commands[2])
+        elif commands[1].lower() == 'exit' or commands[1].lower() == 'quit':
+            avalon.warning('Exiting')
+            exit(0)
         else:
             avalon.error('Invalid command')
             print('Use \'Help\' command to list available commands')
@@ -296,7 +302,7 @@ def main():
 
     # Begin command interpreting
     try:
-        if sys.argv[1].lower() == 'interactive':
+        if sys.argv[1].lower() == 'interactive' or sys.argv[1].lower() == 'int':
             # Launch interactive trojan shell
             prompt = '\n{}[trojan]> {}'.format(avalon.FM.BD, avalon.FM.RST)
             while True:
@@ -307,7 +313,7 @@ def main():
     except IndexError:
         avalon.warning('No commands specified')
         exit(0)
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, EOFError):
         avalon.warning('Exiting')
         exit(0)
     except Exception:

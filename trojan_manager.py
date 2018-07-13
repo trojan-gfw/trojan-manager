@@ -18,7 +18,20 @@ import readline
 import sys
 import traceback
 
-VERSION = '1.3.1'
+VERSION = '1.3.2'
+COMMANDS = [
+    "CreateUserTable",
+    "TruncateUserTable",
+    "Verify",
+    "AddUser",
+    "DelUser",
+    "Show",
+    "SetQuota",
+    "AddQuota",
+    "ClearUsage",
+    "Exit",
+    "Quit",
+]
 
 
 def show_affection(function):
@@ -40,6 +53,23 @@ def catch_mysql_errors(function):
             avalon.error(e)
             return 1
     return wrapper
+
+
+class ShellCompleter(object):
+
+    def __init__(self, options):
+        self.options = sorted(options)
+
+    def complete(self, text, state):
+        if state == 0:
+            if text:
+                self.matches = [s for s in self.options if s and s.lower().startswith(text.lower())]
+            else:
+                self.matches = self.options[:]
+        try:
+            return self.matches[state]
+        except IndexError:
+            return None
 
 
 class TrojanDatabase:
@@ -220,7 +250,7 @@ class TrojanDatabase:
 
 def print_help():
     help_lines = [
-        "{}Commands are not case-sensitive{}".format(avalon.FM.BD, avalon.FM.RST),
+        "\n{}Commands are not case-sensitive{}".format(avalon.FM.BD, avalon.FM.RST),
         "CreateUserTable",
         "TruncateUserTable",
         "Verify [hash]",
@@ -302,6 +332,10 @@ def main():
     # Begin command interpreting
     try:
         if sys.argv[1].lower() == 'interactive' or sys.argv[1].lower() == 'int':
+            # Set command completer
+            completer = ShellCompleter(COMMANDS)
+            readline.set_completer(completer.complete)
+            readline.parse_and_bind('tab: complete')
             # Launch interactive trojan shell
             prompt = '\n{}[trojan]> {}'.format(avalon.FM.BD, avalon.FM.RST)
             while True:

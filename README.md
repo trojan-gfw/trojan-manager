@@ -1,17 +1,11 @@
 # Trojan Manager
 
-## Current Update (Version 1.3.0, July 12, 2018)
-- Adapted to trojan v1.5.0-alpha1
-- Better user interface
-- Interactive shell added
-- Better exception handling
-- Database operations from trojan manager
-    - Create user database
-    - Truncate user database
-    - Drop user database
-- SetQuota and AddQuota now supports conventional units (K,M,G,T)
-- Added ClearUsage function
-- Other minor improvements
+## Current Update (Version 1.3.2, July 13, 2018)
+
+- Patching issues in the previous versions
+- Adding tab completion
+- Adding readline library
+- Code optimization
 
 ## Software Description
 
@@ -43,6 +37,7 @@ python3 verify hash                          # verify if credentials are valid
 
 ```bash
 python3 trojan_manager interactive  # Enter interactive shell
+python3 trojan_manager int          # A shorter version
 [trojan]> adduser user pass
 [trojan]> deluser user
 [trojan]> verify hash

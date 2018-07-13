@@ -248,6 +248,12 @@ class TrojanDatabase:
         return 1
 
 
+def print_legal_info():
+    print('Trojan Manager {}'.format(VERSION))
+    print('(C) 2018 K4YT3X')
+    print('Licensed under GNU GPL v3')
+
+
 def print_help():
     help_lines = [
         "\n{}Commands are not case-sensitive{}".format(avalon.FM.BD, avalon.FM.RST),
@@ -332,6 +338,7 @@ def main():
     # Begin command interpreting
     try:
         if sys.argv[1].lower() == 'interactive' or sys.argv[1].lower() == 'int':
+            print_legal_info()
             # Set command completer
             completer = ShellCompleter(COMMANDS)
             readline.set_completer(completer.complete)

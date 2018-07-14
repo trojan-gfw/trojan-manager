@@ -97,4 +97,4 @@ Verify the user "testuser" with password "password". Passwords stored in the dat
 python3 trojan_manager.py verify 2ce06815404ac8189d03df019361ffc6bd814384dea53bc1a66d135f
 ```
 
-For more information on trojan's authentication mechanism, please refer to [Trojan Authenticator](https://github.com/trojan-gfw/trojan/blob/dev/docs/authenticator.md) Page.
+For more information on trojan's authentication mechanism, please refer to [Trojan Authenticator](https://trojan-gfw.github.io/trojan/authenticator) Page.

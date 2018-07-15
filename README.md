@@ -91,10 +91,10 @@ Now you have finished setting up the database, you may perform user management o
 
 ### Trojan Authentication
 
-Verify the user "testuser" with password "password". Passwords stored in the database are hashed by SHA512. The server is supposed to pass a hash in the format of SHA224(username + ":" + SHA512(password)). Verification is successful if the return value (output) is 0, 1 otherwise.
+Verify the user "testuser" with password "password". The server is supposed to pass a hash in the format of SHA224(username + ":" + password). Verification is successful if the return value (output) is 0, 1 otherwise.
 
 ```bash
-python3 trojan_manager.py verify 2ce06815404ac8189d03df019361ffc6bd814384dea53bc1a66d135f
+python3 trojan_manager.py verify 75a47a2c85e939b3c92cb5c657b7ded4669243c1bfdf4cf812739a0d
 ```
 
 For more information on trojan's authentication mechanism, please refer to [Trojan Authenticator](https://trojan-gfw.github.io/trojan/authenticator) Page.

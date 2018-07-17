@@ -56,7 +56,7 @@ The database must be created manually, where the tables can be created automatic
 ```sql
 CREATE DATABASE trojan;
 CREATE USER trojan;
-GRANT ALL ON trojan.* TO trojan@’localhost’ IDENTIFIED BY ‘thisisthetrojandbpassword’;
+GRANT ALL ON trojan.* TO trojan@'localhost' IDENTIFIED BY 'thisisthetrojandbpassword';
 ```
 
 Trojan Manager can create a table to store user information automatically. Simply use `CreateUserTable` to create the table automatically.

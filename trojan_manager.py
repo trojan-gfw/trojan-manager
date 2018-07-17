@@ -4,7 +4,7 @@
 Name: Trojan Manager
 Dev: K4YT3X
 Date Created: July 8, 2018
-Last Modified: July 12, 2018
+Last Modified: July 17, 2018
 
 Licensed under the GNU General Public License Version 3 (GNU GPL v3),
     available at: https://www.gnu.org/licenses/gpl-3.0.txt
@@ -18,7 +18,7 @@ import readline
 import sys
 import traceback
 
-VERSION = '1.3.2'
+VERSION = '1.3.3'
 COMMANDS = [
     "CreateUserTable",
     "TruncateUserTable",
@@ -277,6 +277,11 @@ def command_interpreter(db_connection, commands):
     """ Trojan shell command interpreter
     """
     try:
+        # Try to guess what the user is saying
+        possibilities = [s for s in COMMANDS if s.lower().startswith(commands[1])]
+        if len(possibilities) == 1:
+            commands[1] = possibilities[0]
+
         if commands[1].lower() == 'help':
             print_help()
             result = 0
@@ -316,14 +321,18 @@ def command_interpreter(db_connection, commands):
         elif commands[1].lower() == 'exit' or commands[1].lower() == 'quit':
             avalon.warning('Exiting')
             exit(0)
+        elif len(possibilities) > 0:
+            avalon.warning('Ambiguous command \"{}\"'.format(commands[1]))
+            print('Use \"Help\" command to list available commands')
+            result = 1
         else:
             avalon.error('Invalid command')
-            print('Use \'Help\' command to list available commands')
+            print('Use \"Help\" command to list available commands')
             result = 1
         return result
     except IndexError:
         avalon.error('Invalid arguments')
-        print('Use \'Help\' command to list available commands')
+        print('Use \"Help\" command to list available commands')
         result = 0
 
 

@@ -18,7 +18,7 @@ import readline
 import sys
 import traceback
 
-VERSION = '1.3.3'
+VERSION = '1.3.4'
 COMMANDS = [
     "CreateUserTable",
     "TruncateUserTable",
@@ -282,7 +282,9 @@ def command_interpreter(db_connection, commands):
         if len(possibilities) == 1:
             commands[1] = possibilities[0]
 
-        if commands[1].lower() == 'help':
+        if commands[1].replace(' ', '') == '':
+            result = 0
+        elif commands[1].lower() == 'help':
             print_help()
             result = 0
         elif commands[1].lower() == 'createusertable':
@@ -353,7 +355,7 @@ def main():
             readline.set_completer(completer.complete)
             readline.parse_and_bind('tab: complete')
             # Launch interactive trojan shell
-            prompt = '\n{}[trojan]> {}'.format(avalon.FM.BD, avalon.FM.RST)
+            prompt = '{}[trojan]> {}'.format(avalon.FM.BD, avalon.FM.RST)
             while True:
                 command_interpreter(trojan_db, [''] + input(prompt).split(' '))
         else:

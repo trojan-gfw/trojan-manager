@@ -1,11 +1,8 @@
 # Trojan Manager
 
-## Current Update (Version 1.3.2, July 13, 2018)
+## Current Update (Version 1.3.5, July 25, 2018)
 
-- Patching issues in the previous versions
-- Adding tab completion
-- Adding readline library
-- Code optimization
+- Main thread catches MySQL connection exceptions
 
 ## Software Description
 

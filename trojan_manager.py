@@ -18,7 +18,7 @@ import readline
 import sys
 import traceback
 
-VERSION = '1.3.4'
+VERSION = '1.3.5'
 COMMANDS = [
     "CreateUserTable",
     "TruncateUserTable",
@@ -56,6 +56,11 @@ def catch_mysql_errors(function):
 
 
 class ShellCompleter(object):
+    """ Completer for readline
+
+    This class tries to match input text
+    to a list of available commands.
+    """
 
     def __init__(self, options):
         self.options = sorted(options)
@@ -73,6 +78,12 @@ class ShellCompleter(object):
 
 
 class TrojanDatabase:
+    """ Trojan Database Connector
+
+    This class generates objects that
+    connects to and controls the trojan
+    database.
+    """
 
     def __init__(self, db_host, db_user, db_pass, db, table):
         """ Initialize database connection
@@ -266,6 +277,7 @@ def print_help():
         "SetQuota [quota]",
         "AddQuota [quota]",
         "ClearUsage [username]",
+        "Interactive / int"
         "Exit / Quit",
         "",
     ]
@@ -344,7 +356,13 @@ def main():
     this file is not being imported.
     """
     # Create database controller connection
-    trojan_db = TrojanDatabase('127.0.0.1', 'trojan', 'thisisthetrojandbpassword', 'trojan', 'users')
+    try:
+        trojan_db = TrojanDatabase('127.0.0.1', 'trojan', 'thisisthetrojandbpassword', 'trojan', 'users')
+    except (MySQLdb.OperationalError) as e:
+        avalon.error('Error establishing connection to MySQL/MariaDB')
+        avalon.error('Please check your settings')
+        traceback.print_exc()
+        exit(1)
 
     # Begin command interpreting
     try:

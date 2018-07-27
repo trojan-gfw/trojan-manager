@@ -1,3 +1,7 @@
+
+[![GitHub issues](https://img.shields.io/github/issues/trojan-gfw/trojan-manager.svg)](https://github.com/trojan-gfw/trojan-manager/issues)
+[![GitHub license](https://img.shields.io/github/license/trojan-gfw/trojan-manager.svg)](https://github.com/trojan-gfw/trojan-manager/blob/master/LICENSE)
+
 # Trojan Manager
 
 ## Current Update (Version 1.3.5, July 25, 2018)

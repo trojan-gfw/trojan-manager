@@ -4,7 +4,13 @@
 
 # Trojan Manager
 
-## Current Update (Version 1.3.5, July 25, 2018)
+## Recent Updates
+
+### 1.3.6 (March 5, 2019)
+
+- Patched for avalon framework 1.6+
+
+### 1.3.5 (July 25, 2018)
 
 - Main thread catches MySQL connection exceptions
 

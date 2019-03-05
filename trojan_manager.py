@@ -4,21 +4,21 @@
 Name: Trojan Manager
 Dev: K4YT3X
 Date Created: July 8, 2018
-Last Modified: July 17, 2018
+Last Modified: March 5, 2019
 
 Licensed under the GNU General Public License Version 3 (GNU GPL v3),
     available at: https://www.gnu.org/licenses/gpl-3.0.txt
 (C) 2018 K4YT3X
 """
+from avalon_framework as Avalon
 from prettytable import PrettyTable
-import avalon_framework as avalon
 import hashlib
 import MySQLdb
 import readline
 import sys
 import traceback
 
-VERSION = '1.3.5'
+VERSION = '1.3.6'
 COMMANDS = [
     "CreateUserTable",
     "TruncateUserTable",
@@ -39,7 +39,7 @@ def show_affection(function):
     """
     def wrapper(*args, **kwargs):
         function(*args, **kwargs)
-        avalon.dbgInfo('{} row(s) affected'.format(args[0].cursor.rowcount))
+        Avalon.debug_info('{} row(s) affected'.format(args[0].cursor.rowcount))
     return wrapper
 
 
@@ -50,7 +50,7 @@ def catch_mysql_errors(function):
         try:
             function(*args, **kwargs)
         except (MySQLdb.Error, MySQLdb.Warning) as e:
-            avalon.error(e)
+            Avalon.error(e)
             return 1
     return wrapper
 
@@ -141,7 +141,7 @@ class TrojanDatabase:
         """
         self.cursor.execute("SELECT * FROM {} WHERE username = '{}'".format(self.table, username))
         if self.cursor.fetchone() is not None:
-            avalon.error('User {} already exists'.format(username))
+            Avalon.error('User {} already exists'.format(username))
             self.cursor.rowcount = 0  # No actual changes to database
             return 1
         fullhash = hashlib.sha224('{}:{}'.format(username, password).encode('utf-8')).hexdigest()
@@ -184,7 +184,7 @@ class TrojanDatabase:
             else:
                 table.add_row([user[0], user[1], user[2]])
         print(table)
-        avalon.info('Query complete, {} user(s) found in database'.format(total_users))
+        Avalon.info('Query complete, {} user(s) found in database'.format(total_users))
         return 0
 
     def convert_units(self, data):
@@ -216,7 +216,7 @@ class TrojanDatabase:
         """
         converted = self.convert_units(quota)
         if not converted:
-            avalon.error('Invalid quota input')
+            Avalon.error('Invalid quota input')
             return 1
         self.cursor.execute("UPDATE {} SET quota = {} WHERE username = '{}'".format(self.table, converted, username))
         self.connection.commit()
@@ -229,7 +229,7 @@ class TrojanDatabase:
         """
         converted = self.convert_units(appended_quota)
         if not converted:
-            avalon.error('Invalid quota input')
+            Avalon.error('Invalid quota input')
             return 1
         self.cursor.execute("UPDATE {} SET quota = quota + {} WHERE username = '{}'".format(self.table, converted, username))
         self.connection.commit()
@@ -253,9 +253,9 @@ class TrojanDatabase:
         for user in all_users:
             valid_hashes.append(user[2])
         if fullhash in valid_hashes:
-            avalon.info('Valid user')
+            Avalon.info('Valid user')
             return 0
-        avalon.warning('Invalid user')
+        Avalon.warning('Invalid user')
         return 1
 
 
@@ -267,7 +267,7 @@ def print_legal_info():
 
 def print_help():
     help_lines = [
-        "\n{}Commands are not case-sensitive{}".format(avalon.FM.BD, avalon.FM.RST),
+        "\n{}Commands are not case-sensitive{}".format(Avalon.FM.BD, Avalon.FM.RST),
         "CreateUserTable",
         "TruncateUserTable",
         "Verify [hash]",
@@ -302,18 +302,18 @@ def command_interpreter(db_connection, commands):
         elif commands[1].lower() == 'createusertable':
             result = db_connection.create_user_table()
         elif commands[1].lower() == 'truncateusertable':
-            avalon.warning('By truncating you will LOSE ALL USER DATA')
-            if avalon.ask('Are you sure you want to truncate?'):
+            Avalon.warning('By truncating you will LOSE ALL USER DATA')
+            if Avalon.ask('Are you sure you want to truncate?'):
                 result = db_connection.truncate_user_table()
             else:
-                avalon.warning('Operation canceled')
+                Avalon.warning('Operation canceled')
                 result = 0
         elif commands[1].lower() == 'dropusertable':
-            avalon.warning('By dropping the table you will LOSE ALL USER DATA')
-            if avalon.ask('Are you sure you want to drop the table?'):
+            Avalon.warning('By dropping the table you will LOSE ALL USER DATA')
+            if Avalon.ask('Are you sure you want to drop the table?'):
                 result = db_connection.drop_user_table()
             else:
-                avalon.warning('Operation canceled')
+                Avalon.warning('Operation canceled')
                 result = 0
         elif commands[1].lower() == 'verify':
             result = db_connection.verify(commands[2])
@@ -333,19 +333,19 @@ def command_interpreter(db_connection, commands):
         elif commands[1].lower() == 'clearusage':
             result = db_connection.clear_usage(commands[2])
         elif commands[1].lower() == 'exit' or commands[1].lower() == 'quit':
-            avalon.warning('Exiting')
+            Avalon.warning('Exiting')
             exit(0)
         elif len(possibilities) > 0:
-            avalon.warning('Ambiguous command \"{}\"'.format(commands[1]))
+            Avalon.warning('Ambiguous command \"{}\"'.format(commands[1]))
             print('Use \"Help\" command to list available commands')
             result = 1
         else:
-            avalon.error('Invalid command')
+            Avalon.error('Invalid command')
             print('Use \"Help\" command to list available commands')
             result = 1
         return result
     except IndexError:
-        avalon.error('Invalid arguments')
+        Avalon.error('Invalid arguments')
         print('Use \"Help\" command to list available commands')
         result = 0
 
@@ -359,8 +359,8 @@ def main():
     try:
         trojan_db = TrojanDatabase('127.0.0.1', 'trojan', 'thisisthetrojandbpassword', 'trojan', 'users')
     except (MySQLdb.OperationalError) as e:
-        avalon.error('Error establishing connection to MySQL/MariaDB')
-        avalon.error('Please check your settings')
+        Avalon.error('Error establishing connection to MySQL/MariaDB')
+        Avalon.error('Please check your settings')
         traceback.print_exc()
         exit(1)
 
@@ -373,20 +373,20 @@ def main():
             readline.set_completer(completer.complete)
             readline.parse_and_bind('tab: complete')
             # Launch interactive trojan shell
-            prompt = '{}[trojan]> {}'.format(avalon.FM.BD, avalon.FM.RST)
+            prompt = '{}[trojan]> {}'.format(Avalon.FM.BD, Avalon.FM.RST)
             while True:
                 command_interpreter(trojan_db, [''] + input(prompt).split(' '))
         else:
             # Return to shell with command return value
             exit(command_interpreter(trojan_db, sys.argv[0:]))
     except IndexError:
-        avalon.warning('No commands specified')
+        Avalon.warning('No commands specified')
         exit(0)
     except (KeyboardInterrupt, EOFError):
-        avalon.warning('Exiting')
+        Avalon.warning('Exiting')
         exit(0)
     except Exception:
-        avalon.error('Exception caught')
+        Avalon.error('Exception caught')
         traceback.print_exc()
         exit(1)
 
@@ -394,4 +394,4 @@ def main():
 if __name__ == '__main__':
     main()
 else:
-    avalon.warning('This file cannot be imported')
+    Avalon.warning('This file cannot be imported')

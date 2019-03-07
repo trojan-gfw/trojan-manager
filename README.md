@@ -43,8 +43,8 @@ python3 verify hash                          # verify if credentials are valid
 ### Using interactive shell
 
 ```bash
-python3 trojan_manager interactive  # Enter interactive shell
-python3 trojan_manager int          # A shorter version
+python3 trojan_manager.py interactive  # Enter interactive shell
+python3 trojan_manager.py int          # A shorter version
 [trojan]> adduser user pass
 [trojan]> deluser user
 [trojan]> verify hash

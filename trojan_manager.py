@@ -8,9 +8,10 @@ Last Modified: March 5, 2019
 
 Licensed under the GNU General Public License Version 3 (GNU GPL v3),
     available at: https://www.gnu.org/licenses/gpl-3.0.txt
-(C) 2018 K4YT3X
+Copyright (C) 2018-2019, K4YT3X <k4yt3x@k4yt3x.com>
 """
-from avalon_framework as Avalon
+
+from avalon_framework import Avalon
 from prettytable import PrettyTable
 import hashlib
 import MySQLdb
@@ -18,7 +19,7 @@ import readline
 import sys
 import traceback
 
-VERSION = '1.3.6'
+VERSION = '1.3.7'
 COMMANDS = [
     "CreateUserTable",
     "TruncateUserTable",
@@ -146,7 +147,8 @@ class TrojanDatabase:
             return 1
         fullhash = hashlib.sha224('{}:{}'.format(username, password).encode('utf-8')).hexdigest()
         self.cursor.execute("INSERT INTO {} (username, password) VALUES ('{}', '{}')".format(self.table, username, fullhash))
-        self.connection.commit()
+        # self.cursor.execute("INSERT INTO {} SHA2(CONCAT(username, ':', password)', 224) VALUES ('{}', '{}')".format(self.table, username, password))
+        # self.connection.commit()
         return 0
 
     @show_affection

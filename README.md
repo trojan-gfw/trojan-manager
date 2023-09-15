@@ -60,10 +60,18 @@ The trojan manager interactive shell is an interface that can simplify trojan ma
 
 The database must be created manually, where the tables can be created automatically by trojan manager. To create a database, a user and then grant privileges, use the following commands in MySQL with root privilege.
 
+#### versions < mysql 8.0
 ```sql
 CREATE DATABASE trojan;
 CREATE USER trojan;
 GRANT ALL ON trojan.* TO trojan@'localhost' IDENTIFIED BY 'thisisthetrojandbpassword';
+```
+#### versions >= mysql 8.0
+
+```sql
+CREATE DATABASE trojan;
+CREATE USER trojan IDENTIFIED BY 'thisisthetrojandbpassword';
+GRANT ALL ON trojan.* TO trojan@'%';
 ```
 
 Trojan Manager can create a table to store user information automatically. Simply use `CreateUserTable` to create the table automatically.
